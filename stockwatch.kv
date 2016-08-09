@@ -1,0 +1,46 @@
+<MainWindow>:
+    id: main_window
+    size_hint: 1.0, 1.0
+    pos_hint: {'center_x': .5, 'center_y': .5}
+    do_default_tab: False
+
+    TabbedPanelItem:
+        id: value_panel
+        text: 'Stock Value'
+        BoxLayout:
+            orientation: 'vertical'
+            DataGrid:
+                id: stock_grid
+            Button:
+                id: refresh_button
+                on_release: app.refresh_prices()
+                text: 'Refresh Prices'
+    TabbedPanelItem:
+        text: 'Setup'
+        disabled: False
+        BoxLayout:
+            orientation: 'vertical'
+            DataGrid:
+                id: existing_stock_setup_grid
+            GridLayout:
+                rows: 4
+                cols: 2
+                padding: 10
+                spacing: 10
+                Label:
+                    text: 'Stock:'
+                TextInput:
+                    id: stock_input
+                Label:
+                    text: 'Num Shares:'
+                TextInput:
+                    id: num_shares_input
+                Label:
+                    text: 'Price/Share:'
+                TextInput:
+                    id: price_input
+ 
+                Button:
+                    text: 'Add'
+                Button:
+                    text: 'Cancel'
