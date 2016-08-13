@@ -7,6 +7,7 @@ from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProper
 from kivy.storage.jsonstore import JsonStore
 from kivy.network.urlrequest import UrlRequest
 from kivy.core.window import Window
+from kivy.uix.behaviors.focus import FocusBehavior  #https://kivy.org/docs/api-kivy.uix.behaviors.focus.html
 
 from Datagrid import DataGrid
 from price_input import PriceInput
