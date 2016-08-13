@@ -20,8 +20,6 @@
         disabled: False
         BoxLayout:
             orientation: 'vertical'
-            DataGrid:
-                id: existing_stock_setup_grid
             GridLayout:
                 rows: 4
                 cols: 2
@@ -33,14 +31,18 @@
                     id: stock_input
                 Label:
                     text: 'Num Shares:'
-                TextInput:
+                IntegerInput:
                     id: num_shares_input
                 Label:
                     text: 'Price/Share:'
-                TextInput:
+                PriceInput:
                     id: price_input
  
                 Button:
                     text: 'Add'
+                    on_release: app.on_add_new_stock()
                 Button:
                     text: 'Cancel'
+            DataGrid:
+                id: existing_stock_setup_grid
+

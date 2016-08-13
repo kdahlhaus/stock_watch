@@ -4,12 +4,28 @@ kivy.require('1.0.6') # replace with your current kivy version !
 from kivy.app import App
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty, StringProperty
+
 from kivy.network.urlrequest import UrlRequest
 from kivy.core.window import Window
 
 from Datagrid import DataGrid
+from price_input import PriceInput
+from integer_input import IntegerInput
 
 import csv
+
+
+class StockEntry(object):
+    def __init__(self, symbol=None, num_shares=0, purchase_price=0.0):
+        self.symbol=symbol
+        self.num_shares=num_shares
+        self.purchase_price=purchase_price
+
+    def __repr__(self):
+        return "StockEntry(symbol={symbol}, num_shares={num_shares}, pprice={purchase_price})".format(**self.__dict__)
+
+        
+
 
 class YahooStockPrices():
 
@@ -86,6 +102,8 @@ class StockWatch(App):
     refresh_button = ObjectProperty()
     rendered_stock_data = StringProperty("")
 
+    stock_entries = []
+
     #                symbol  #     purchase price
     stocks = { "KEY":(2500, 11.47), "GM":(3300, 30.367), "CMI":(0,1), "NFLX":(0,1)   }
 
@@ -93,18 +111,56 @@ class StockWatch(App):
     def on_error(self, *args):
         print "on_error: " + str(args)
 
+
+    def render_setup_screen_stocks(self):
+        self.main_window.ids.existing_stock_setup_grid.removeAllContent()
+        for e in self.stock_entries:
+            temp_data = [ {"text":e.symbol, "type":"Label"},
+                         {'text':str(e.num_shares), 'type':'Label'},
+                         {'text':"${:.2f}".format(e.purchase_price), 'type':'Label'},
+                     {'text':"x", 'type':'Button'} ]
+            self.main_window.ids.existing_stock_setup_grid.addRow(temp_data)
+ 
+
+    def on_add_new_stock(self, *args):
+        symbol = self.main_window.ids.stock_input.text
+        #TODO: validate symbol
+        num_shares = int(self.main_window.ids.num_shares_input.text)
+        price = float(self.main_window.ids.price_input.text)
+        new_entry = StockEntry( symbol, num_shares, price)
+        print "new entry: {}".format(new_entry)
+        self.stock_entries.append(new_entry)
+        self.render_setup_screen_stocks()
+
+
+
+
+
+
     def refresh_prices(self):
         self.pricer = YahooStockPrices(self.on_new_prices, self.on_error)
-        self.pricer.add_symbol("KEY")
-        self.pricer.add_symbol("GM")
-        self.pricer.add_symbol("CMI")
-        self.pricer.add_symbol("NFLX")
+        symbols = set()
+        for stock_entry in self.stock_entries:
+            symbols.add(stock_entry.symbol)
+        for symbol in symbols:
+            self.pricer.add_symbol(symbol)
         self.pricer.get_prices()
 
 
 
     def on_new_prices(self, prices):
         stock_data =[]
+        for entry in self.stock_entries:
+            price_data = prices[entry.symbol]
+            price = float(price_data[1])
+            day_low=float(price_data[3])
+            day_high=float(price_data[2])
+
+            total_gain_or_loss = entry.num_shares*(price-entry.purchase_price)
+            stock_data.append( { "symbol":entry.symbol, "price":price, "total_gain_or_loss":total_gain_or_loss, "day_low":day_low, "day_high":day_high } )
+
+
+        """
         for symbol in prices.keys():
             print symbol, prices[symbol]
             price = float(prices[symbol][1])
@@ -114,9 +170,12 @@ class StockWatch(App):
             day_high=float(prices[symbol][2])
             total_gain_or_loss = num_shares*(price-orig_price)
             stock_data.append( { "symbol":symbol, "price":price, "total_gain_or_loss":total_gain_or_loss, "day_low":day_low, "day_high":day_high } )
+            """
         self.render_new_stock_data(stock_data)            
 
-    def render_new_stock_data( self, stock_data ):
+
+
+    def render_new_stock_data( self, stock_data ):                              
 
         # display the given list of stock data
         total = 0.0
