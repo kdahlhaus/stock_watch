@@ -77,6 +77,15 @@ class YahooStockPrices():
 
 class MainWindow(TabbedPanel):
 
+    on_tab_switch = None
+
+    def switch_to(self, header):
+        TabbedPanel.switch_to(self, header)
+        if self.on_tab_switch:
+            self.on_tab_switch(header)
+
+ 
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.stock_grid = self.ids.stock_grid
@@ -84,7 +93,7 @@ class MainWindow(TabbedPanel):
         cw = Window.width / 5
         self.stock_grid.setupGrid( [{'text':"Stock", 'type':'BorderLabel', 'width':cw},
                                     {'text':"Price", 'type':'BorderLabel', 'width':cw},
-                                    {'text':"Day Low", 'type':'BorderLabel', 'width':cw},
+                                      {'text':"Day Low", 'type':'BorderLabel', 'width':cw},
                                     {'text':"Day High", 'type':'BorderLabel', 'width':cw},
                                     {'text':"Total Gain(Loss)", 'type':'BorderLabel', 'width':cw}],  Window.width, 46)
 
@@ -102,14 +111,20 @@ class StockWatch(App):
     refresh_button = ObjectProperty()
     rendered_stock_data = StringProperty("")
 
-    stock_entries = []
+    stock_entries = [StockEntry("KEY", 2500, 11.47), StockEntry("GM", 3300, 30.367),
+                     StockEntry("CMI", 0, 0), StockEntry("NFLX", 0, 0) ]
 
-    #                symbol  #     purchase price
-    stocks = { "KEY":(2500, 11.47), "GM":(3300, 30.367), "CMI":(0,1), "NFLX":(0,1)   }
+
+    def on_tab_switch(self, tab_header):
+        "wired to be called on tab switch"
+        if tab_header.text == "Setup":
+            self.render_setup_screen_stocks()
+
 
 
     def on_error(self, *args):
         print "on_error: " + str(args)
+
 
 
     def render_setup_screen_stocks(self):
@@ -138,6 +153,7 @@ class StockWatch(App):
 
 
     def refresh_prices(self):
+        "kick off async call to get updated stock proces"
         self.pricer = YahooStockPrices(self.on_new_prices, self.on_error)
         symbols = set()
         for stock_entry in self.stock_entries:
@@ -149,6 +165,7 @@ class StockWatch(App):
 
 
     def on_new_prices(self, prices):
+        "callback when new price data comes in"
         stock_data =[]
         for entry in self.stock_entries:
             price_data = prices[entry.symbol]
@@ -159,28 +176,15 @@ class StockWatch(App):
             total_gain_or_loss = entry.num_shares*(price-entry.purchase_price)
             stock_data.append( { "symbol":entry.symbol, "price":price, "total_gain_or_loss":total_gain_or_loss, "day_low":day_low, "day_high":day_high } )
 
-
-        """
-        for symbol in prices.keys():
-            print symbol, prices[symbol]
-            price = float(prices[symbol][1])
-            num_shares=self.stocks[symbol][0]
-            orig_price=self.stocks[symbol][1]
-            day_low=float(prices[symbol][3])
-            day_high=float(prices[symbol][2])
-            total_gain_or_loss = num_shares*(price-orig_price)
-            stock_data.append( { "symbol":symbol, "price":price, "total_gain_or_loss":total_gain_or_loss, "day_low":day_low, "day_high":day_high } )
-            """
         self.render_new_stock_data(stock_data)            
 
 
 
     def render_new_stock_data( self, stock_data ):                              
+        "render a set of stock data on the main screen"
 
         # display the given list of stock data
         total = 0.0
-        #text = ""
-        #text += "{symbol:>8}:   {price:10} {dl:>8} {dh:>8}   {total_gain_or_loss:14}\n".format(symbol="Stock", price="Current Price", total_gain_or_loss="Total Gain", dh="Day High", dl="Day Low")
         self.main_window.stock_grid.removeAllContent()
         for row in stock_data:
             temp_data = [{'text':row['symbol'], 'type':'Label'}, 
@@ -203,6 +207,7 @@ class StockWatch(App):
 
     def build(self):
         self.main_window = MainWindow()
+        self.main_window.on_tab_switch = self.on_tab_switch
         return self.main_window
 
 
