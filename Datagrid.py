@@ -14,6 +14,8 @@ from kivy.graphics import Rectangle
 from BorderBehavior import BorderBehavior
 from kivy.properties import ObjectProperty
 
+from functools import partial
+
 class BorderButton(Button, BorderBehavior):
 	def __init__(self):
 		super(BorderButton, self).__init__()
