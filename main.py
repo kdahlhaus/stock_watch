@@ -170,11 +170,16 @@ class StockWatch(App):
         #TODO: validate symbol
         num_shares = int(self.main_window.ids.num_shares_input.text)
         price = float(self.main_window.ids.price_input.text)
+
         new_entry = StockEntry( symbol, num_shares, price)
-        print "new entry: {}".format(new_entry)
         self.stock_entries.append(new_entry)
+
         self.save_stock_entries()
         self.render_setup_screen_stocks()
+
+        self.main_window.ids.stock_input.text=""
+        self.main_window.ids.num_shares_input.text=""
+        self.main_window.ids.price_input.text=""
 
 
 
