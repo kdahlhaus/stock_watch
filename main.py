@@ -4,7 +4,7 @@ kivy.require('1.0.6') # replace with your current kivy version !
 from kivy.app import App
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty, StringProperty
-
+from kivy.storage.jsonstore import JsonStore
 from kivy.network.urlrequest import UrlRequest
 from kivy.core.window import Window
 
@@ -115,12 +115,32 @@ class StockWatch(App):
                      StockEntry("CMI", 0, 0), StockEntry("NFLX", 0, 0) ]
 
 
+
+    #TODO: clean up store - make attribute of app
+
+    def save_stock_entries(self):
+        store = JsonStore('stockwatch.json')
+        json_compatible_data = []
+        for entry in self.stock_entries:
+            json_compatible_data.append(entry.__dict__)
+        store['stock_entries']= { 'entries':json_compatible_data } 
+
+    def load_stock_entries(self):
+        self.stock_entries=[]
+        store = JsonStore('stockwatch.json')
+        if 'stock_entries' in store:
+            dicts = store.get("stock_entries")['entries']
+            for d in dicts:
+                s = StockEntry()
+                s.__dict__=d
+                self.stock_entries.append(s)
+
     def on_tab_switch(self, tab_header):
         "wired to be called on tab switch"
-        if tab_header.text == "Setup":
+        if tab_header.text == "Setup":   # TODO: switch to objects to avoid text value coupling
             self.render_setup_screen_stocks()
-
-
+        elif tab_header.text=="Stock Value":
+            self.refresh_prices()
 
     def on_error(self, *args):
         print "on_error: " + str(args)
@@ -145,6 +165,7 @@ class StockWatch(App):
         new_entry = StockEntry( symbol, num_shares, price)
         print "new entry: {}".format(new_entry)
         self.stock_entries.append(new_entry)
+        self.save_stock_entries()
         self.render_setup_screen_stocks()
 
 
@@ -208,6 +229,7 @@ class StockWatch(App):
     def build(self):
         self.main_window = MainWindow()
         self.main_window.on_tab_switch = self.on_tab_switch
+        self.load_stock_entries()
         return self.main_window
 
 
