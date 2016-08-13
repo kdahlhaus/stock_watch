@@ -244,6 +244,7 @@ class StockWatch(App):
         self.main_window = MainWindow()
         self.main_window.on_tab_switch = self.on_tab_switch
         self.load_stock_entries()
+        print self.main_window.ids.stock_input.focus_next
         return self.main_window
 
 

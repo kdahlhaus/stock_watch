@@ -30,11 +30,13 @@
                 TextInput:
                     id: stock_input
                     text: ''
+                    focus_next: num_shares_input
                 Label:
                     text: 'Num Shares:'
-                IntegerInput:
+                TextInput:
                     id: num_shares_input
                     input_type: 'number'
+                    focus_next: price_input
                     text: ''
                 Label:
                     text: 'Price/Share:'
@@ -42,9 +44,9 @@
                     id: price_input
                     input_type: 'number'
                     text: ''
-
                 Label:
                 Button:
+                    id: add_button
                     text: 'Add'
                     on_release: app.on_add_new_stock()
             DataGrid:
