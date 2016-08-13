@@ -21,6 +21,9 @@ class StockEntry(object):
         self.num_shares=num_shares
         self.purchase_price=purchase_price
 
+    def __eq__(self, b):
+        return self.__dict__ == b.__dict__
+
     def __repr__(self):
         return "StockEntry(symbol={symbol}, num_shares={num_shares}, pprice={purchase_price})".format(**self.__dict__)
 
@@ -145,15 +148,20 @@ class StockWatch(App):
     def on_error(self, *args):
         print "on_error: " + str(args)
 
+    def on_delete_entry(self, *args, **kwargs):
+        entry = kwargs['entry']
+        self.stock_entries.remove(entry)
+        self.render_setup_screen_stocks()
+        self.save_stock_entries()
 
 
     def render_setup_screen_stocks(self):
         self.main_window.ids.existing_stock_setup_grid.removeAllContent()
-        for e in self.stock_entries:
+        for i,e in enumerate(self.stock_entries):
             temp_data = [ {"text":e.symbol, "type":"Label"},
                          {'text':str(e.num_shares), 'type':'Label'},
                          {'text':"${:.2f}".format(e.purchase_price), 'type':'Label'},
-                     {'text':"x", 'type':'Button'} ]
+                         {'text':"x", 'type':'Button', 'callback':self.on_delete_entry, 'params':{'entry':e, 'index':i} } ]
             self.main_window.ids.existing_stock_setup_grid.addRow(temp_data)
  
 
