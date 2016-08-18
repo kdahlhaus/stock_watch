@@ -1,3 +1,5 @@
 *.pyc
 .buildozer/
 bin/
+stockwatch.json
+stopwatch-release-key.keystore
