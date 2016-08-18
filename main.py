@@ -1,6 +1,7 @@
 import kivy
 kivy.require('1.0.6') # replace with your current kivy version !
 
+
 from kivy.app import App
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty, StringProperty
@@ -8,12 +9,20 @@ from kivy.storage.jsonstore import JsonStore
 from kivy.network.urlrequest import UrlRequest
 from kivy.core.window import Window
 from kivy.uix.behaviors.focus import FocusBehavior  #https://kivy.org/docs/api-kivy.uix.behaviors.focus.html
+from kivy.utils import platform
+from kivy.logger import Logger as logging
 
 from Datagrid import DataGrid
 from price_input import PriceInput
 from integer_input import IntegerInput
 
 import csv
+
+
+if platform=="android":
+    DATA_GRID_ROW_HEIGHT = 80
+else:
+    DATA_GRID_ROW_HEIGHT=25
 
 
 class StockEntry(object):
@@ -99,13 +108,13 @@ class MainWindow(TabbedPanel):
                                     {'text':"Price", 'type':'BorderLabel', 'width':cw},
                                       {'text':"Day Low", 'type':'BorderLabel', 'width':cw},
                                     {'text':"Day High", 'type':'BorderLabel', 'width':cw},
-                                    {'text':"Total Gain(Loss)", 'type':'BorderLabel', 'width':cw}],  Window.width, 46)
+                                    {'text':"Total", 'type':'BorderLabel', 'width':cw}],  Window.width, DATA_GRID_ROW_HEIGHT)
 
         cw = Window.width / 4
         self.existing_stock_setup_grid.setupGrid([{'text':"Stock", 'type':'BorderLabel', 'width':cw},
                                     {'text':"Num Shares", 'type':'BorderLabel', 'width':cw},
                                     {'text':"Purchase Price", 'type':'BorderLabel', 'width':cw},
-                                    {'text':"Remove", 'type':'BorderLabel', 'width':cw} ], Window.width, 46)
+                                    {'text':"Remove", 'type':'BorderLabel', 'width':cw} ], Window.width, DATA_GRID_ROW_HEIGHT)
 
 
 
@@ -138,6 +147,10 @@ class StockWatch(App):
                 s = StockEntry()
                 s.__dict__=d
                 self.stock_entries.append(s)
+        if len(self.stock_entries)==0:
+            self.stock_entries.append(StockEntry("Key", 2500, 11.34))
+            self.stock_entries.append(StockEntry("GM", 1000, 34.01))
+            self.stock_entries.append(StockEntry("CMI", 300, 30))
 
     def on_tab_switch(self, tab_header):
         "wired to be called on tab switch"
@@ -226,7 +239,7 @@ class StockWatch(App):
                          {'text':"${:.2f}".format(row['price']), 'type':'Label'},
                          {'text':"${:.2f}".format(row['day_low']), 'type':'Label'},
                          {'text':"${:.2f}".format(row['day_high']), 'type':'Label'},
-                         {'text':"${:.2f}".format(row['total_gain_or_loss']), 'type':'Label'}]
+                         {'text':"${:.0f}".format(row['total_gain_or_loss']), 'type':'Label'}]
             total += float(row["total_gain_or_loss"])
             self.main_window.stock_grid.addRow(temp_data)
 
@@ -234,8 +247,8 @@ class StockWatch(App):
         temp_data = [{'text':'', 'type':'Label'}, 
                     {'text':"", 'type':'Label'},
                     {'text':"", 'type':'Label'},
-                    {'text':"total:", 'type':'Label'},
-                    {'text':"${:.2f}".format(total), 'type':'Label'}] 
+                    {'text':"Total:", 'type':'Label'},
+                    {'text':"${:.0f}".format(total), 'type':'Label'}] 
         self.main_window.stock_grid.addRow(temp_data)
         #self.rendered_stock_data = text        
 
@@ -244,9 +257,11 @@ class StockWatch(App):
         self.main_window = MainWindow()
         self.main_window.on_tab_switch = self.on_tab_switch
         self.load_stock_entries()
-        print self.main_window.ids.stock_input.focus_next
         return self.main_window
 
 
 if __name__ == '__main__':
+    logging.info("DATA_GRID_ROW_HEIGHT %d"%DATA_GRID_ROW_HEIGHT)
+    logging.debug("DATA_GRID_ROW_HEIGHT %d"%DATA_GRID_ROW_HEIGHT)
+
     StockWatch().run()
