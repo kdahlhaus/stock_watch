@@ -1,6 +1,11 @@
 # Stock Watch
 This is a simple Kivy application that tracks the latest price of a set of stocks and shows the amount you've gained or lost.   
 
+
+![Android version screen-shot](screen_shots/20160825.png)
+
+
+
 ## Platforms
 It has been tested on Linux and Android.
 
