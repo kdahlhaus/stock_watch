@@ -1,3 +1,7 @@
+"""
+Slightly modified version of https://github.com/namkazt/Kivy-Datagrid-plugin
+"""
+
 import kivy
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
