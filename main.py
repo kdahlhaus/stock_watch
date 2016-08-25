@@ -153,7 +153,7 @@ class StockWatch(App):
 
     def refresh_prices(self):
         "kick off async call to get updated stock proces"
-        self.pricer = YahooStockPriceProvider(self.on_new_prices, self.on_error)
+        self.pricer = YahooStockPriceProvider(self.on_new_prices, self.on_error)  # TODO provide other stock price providers
         symbols = set()
         for stock_entry in self.stock_entries:
             symbols.add(stock_entry.symbol)
