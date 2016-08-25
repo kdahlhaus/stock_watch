@@ -11,7 +11,7 @@ from kivy.uix.behaviors.focus import FocusBehavior  #https://kivy.org/docs/api-k
 from kivy.utils import platform
 from kivy.logger import Logger as logging
 
-from Datagrid import DataGrid
+from data_grid_plugin.Datagrid import DataGrid
 from price_input import PriceInput
 from integer_input import IntegerInput
 
