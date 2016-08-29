@@ -12,8 +12,8 @@ from kivy.utils import platform
 from kivy.logger import Logger as logging
 
 from data_grid_plugin.Datagrid import DataGrid
-from price_input import PriceInput
-from integer_input import IntegerInput
+from widgets.price_input import PriceInput
+from widgets.integer_input import IntegerInput
 
 from stock_price_providers.yahoo_provider import YahooStockPriceProvider
 
