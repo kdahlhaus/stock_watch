@@ -11,13 +11,14 @@ from kivy.uix.behaviors.focus import FocusBehavior  #https://kivy.org/docs/api-k
 from kivy.utils import platform
 from kivy.logger import Logger as logging
 
+# UI imports, some used implicitly by the GUI loader
 from data_grid_plugin.Datagrid import DataGrid
 from widgets.price_input import PriceInput
 from widgets.integer_input import IntegerInput
 
-from stock_price_providers.yahoo_provider import YahooStockPriceProvider
 
 from portfolio.portfolio_item import PortfolioItem
+from stock_price_providers.yahoo_provider import YahooStockPriceProvider
 
 if platform=="android":
     DATA_GRID_ROW_HEIGHT = 80
@@ -157,11 +158,14 @@ class StockWatch(App):
         stock_data =[]
         for entry in self.portfolio:
             price_data = prices[entry.symbol]
-            price = float(price_data[1])
-            day_low=float(price_data[3])
-            day_high=float(price_data[2])
+            price = float(price_data[1]) if price_data[1] != "N/A" else 0.0
+            day_low=float(price_data[3]) if price_data[3] != "N/A" else 0.0
+            day_high=float(price_data[2]) if price_data[2] != "N/A" else 0.0
 
-            total_gain_or_loss = entry.num_shares*(price-entry.purchase_price)
+            if price != 0.0:
+                total_gain_or_loss = entry.num_shares*(price-entry.purchase_price)
+            else:
+                total_gain_or_loss = 0.0
             stock_data.append( { "symbol":entry.symbol, "price":price, "total_gain_or_loss":total_gain_or_loss, "day_low":day_low, "day_high":day_high } )
 
         self.render_new_stock_data(stock_data)            
