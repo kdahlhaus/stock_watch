@@ -17,25 +17,14 @@ from widgets.integer_input import IntegerInput
 
 from stock_price_providers.yahoo_provider import YahooStockPriceProvider
 
+from portfolio.portfolio_item import PortfolioItem
+
 if platform=="android":
     DATA_GRID_ROW_HEIGHT = 80
 else:
     DATA_GRID_ROW_HEIGHT=25
 
 
-class StockEntry(object):
-    def __init__(self, symbol=None, num_shares=0, purchase_price=0.0):
-        self.symbol=symbol
-        self.num_shares=num_shares
-        self.purchase_price=purchase_price
-
-    def __eq__(self, b):
-        return self.__dict__ == b.__dict__
-
-    def __repr__(self):
-        return "StockEntry(symbol={symbol}, num_shares={num_shares}, pprice={purchase_price})".format(**self.__dict__)
-
-        
 
 
 
@@ -75,33 +64,33 @@ class StockWatch(App):
     refresh_button = ObjectProperty()
     rendered_stock_data = StringProperty("")
 
-    stock_entries = [StockEntry("KEY", 2500, 11.47), StockEntry("GM", 3300, 30.367),
-                     StockEntry("CMI", 0, 0), StockEntry("NFLX", 0, 0) ]
+    portfolio = [PortfolioItem("KEY", 2500, 11.47), PortfolioItem("GM", 3300, 30.367),
+                     PortfolioItem("CMI", 0, 0), PortfolioItem("NFLX", 0, 0) ]
 
 
 
     #TODO: clean up store - make attribute of app
 
-    def save_stock_entries(self):
+    def save_portfolio(self):
         store = JsonStore('stockwatch.json')
         json_compatible_data = []
-        for entry in self.stock_entries:
+        for entry in self.portfolio:
             json_compatible_data.append(entry.__dict__)
-        store['stock_entries']= { 'entries':json_compatible_data } 
+        store['portfolio']= { 'entries':json_compatible_data } 
 
-    def load_stock_entries(self):
-        self.stock_entries=[]
+    def load_portfolio(self):
+        self.portfolio=[]
         store = JsonStore('stockwatch.json')
-        if 'stock_entries' in store:
-            dicts = store.get("stock_entries")['entries']
+        if 'portfolio' in store:
+            dicts = store.get("portfolio")['entries']
             for d in dicts:
-                s = StockEntry()
+                s = PortfolioItem()
                 s.__dict__=d
-                self.stock_entries.append(s)
-        if len(self.stock_entries)==0:
-            self.stock_entries.append(StockEntry("Key", 2500, 11.34))
-            self.stock_entries.append(StockEntry("GM", 1000, 34.01))
-            self.stock_entries.append(StockEntry("CMI", 300, 30))
+                self.portfolio.append(s)
+        if len(self.portfolio)==0:
+            self.portfolio.append(PortfolioItem("Key", 2500, 11.34))
+            self.portfolio.append(PortfolioItem("GM", 1000, 34.01))
+            self.portfolio.append(PortfolioItem("CMI", 300, 30))
 
     def on_tab_switch(self, tab_header):
         "wired to be called on tab switch"
@@ -115,14 +104,14 @@ class StockWatch(App):
 
     def on_delete_entry(self, *args, **kwargs):
         entry = kwargs['entry']
-        self.stock_entries.remove(entry)
+        self.portfolio.remove(entry)
         self.render_setup_screen_stocks()
-        self.save_stock_entries()
+        self.save_portfolio()
 
 
     def render_setup_screen_stocks(self):
         self.main_window.ids.existing_stock_setup_grid.removeAllContent()
-        for i,e in enumerate(self.stock_entries):
+        for i,e in enumerate(self.portfolio):
             temp_data = [ {"text":e.symbol, "type":"Label"},
                          {'text':str(e.num_shares), 'type':'Label'},
                          {'text':"${:.2f}".format(e.purchase_price), 'type':'Label'},
@@ -136,10 +125,10 @@ class StockWatch(App):
         num_shares = int(self.main_window.ids.num_shares_input.text)
         price = float(self.main_window.ids.price_input.text)
 
-        new_entry = StockEntry( symbol, num_shares, price)
-        self.stock_entries.append(new_entry)
+        new_entry = PortfolioItem( symbol, num_shares, price)
+        self.portfolio.append(new_entry)
 
-        self.save_stock_entries()
+        self.save_portfolio()
         self.render_setup_screen_stocks()
 
         self.main_window.ids.stock_input.text=""
@@ -155,8 +144,8 @@ class StockWatch(App):
         "kick off async call to get updated stock proces"
         self.pricer = YahooStockPriceProvider(self.on_new_prices, self.on_error)  # TODO provide other stock price providers
         symbols = set()
-        for stock_entry in self.stock_entries:
-            symbols.add(stock_entry.symbol)
+        for stock in self.portfolio:
+            symbols.add(stock.symbol)
         for symbol in symbols:
             self.pricer.add_symbol(symbol)
         self.pricer.get_prices()
@@ -166,7 +155,7 @@ class StockWatch(App):
     def on_new_prices(self, prices):
         "callback when new price data comes in"
         stock_data =[]
-        for entry in self.stock_entries:
+        for entry in self.portfolio:
             price_data = prices[entry.symbol]
             price = float(price_data[1])
             day_low=float(price_data[3])
@@ -207,7 +196,7 @@ class StockWatch(App):
     def build(self):
         self.main_window = MainWindow()
         self.main_window.on_tab_switch = self.on_tab_switch
-        self.load_stock_entries()
+        self.load_portfolio()
         return self.main_window
 
 
