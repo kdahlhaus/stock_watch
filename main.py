@@ -204,6 +204,19 @@ class StockWatch(App):
         return self.main_window
 
 
+
+
+    def on_pause(self):
+        # Here you can save data if needed
+        logging.info("pausing")
+        return True
+
+    def on_resume(self):
+        # Here you can check if any data needs replacing (usually nothing)
+        logging.info("resuming")
+        pass
+
+
 if __name__ == '__main__':
     logging.info("DATA_GRID_ROW_HEIGHT %d"%DATA_GRID_ROW_HEIGHT)
     logging.debug("DATA_GRID_ROW_HEIGHT %d"%DATA_GRID_ROW_HEIGHT)
