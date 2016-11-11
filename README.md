@@ -1,3 +1,6 @@
+[<img src="https://landscape.io/github/kdahlhaus/stockwatch/master/landscape.png">](https://landscape.io/github/kdahlhaus/stockwatch/master)
+
+
 # Stock Watch
 This is a simple Kivy application that tracks the latest price of a set of stocks and shows the amount you've gained or lost.   
 
