@@ -5,15 +5,15 @@ kivy.require('1.0.6') # replace with your current kivy version !
 
 from kivy.app import App
 from kivy.uix.tabbedpanel import TabbedPanel
-from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty, StringProperty
+from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty, StringProperty  # noqa
 from kivy.storage.jsonstore import JsonStore
 from kivy.core.window import Window
-from kivy.uix.behaviors.focus import FocusBehavior  #https://kivy.org/docs/api-kivy.uix.behaviors.focus.html
+from kivy.uix.behaviors.focus import FocusBehavior  #https://kivy.org/docs/api-kivy.uix.behaviors.focus.html  # noqa
 from kivy.utils import platform
 from kivy.logger import Logger as logging
 
 # UI imports, some used implicitly by the GUI loader
-from data_grid_plugin.Datagrid import DataGrid
+from data_grid_plugin.Datagrid import DataGrid # noqa
 from widgets.price_input import PriceInput
 from widgets.integer_input import IntegerInput
 
