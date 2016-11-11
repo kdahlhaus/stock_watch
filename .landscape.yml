@@ -4,3 +4,5 @@ python-targets:
   - 2
 ignore-paths:
   - data_grid_plugin
+vulture:
+    run: true
