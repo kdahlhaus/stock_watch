@@ -1,7 +1,7 @@
 import kivy
 kivy.require('1.0.6') # replace with your current kivy version !
 
-# pylint: disable=unused-import
+# pylint: disable=unused-import,F401
 
 from kivy.app import App
 from kivy.uix.tabbedpanel import TabbedPanel
