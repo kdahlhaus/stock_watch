@@ -14,8 +14,8 @@ from kivy.logger import Logger as logging
 
 # UI imports, some used implicitly by the GUI loader
 from data_grid_plugin.Datagrid import DataGrid # noqa
-from widgets.price_input import PriceInput
-from widgets.integer_input import IntegerInput
+from widgets.price_input import PriceInput # noqa
+from widgets.integer_input import IntegerInput # noqa
 
 
 from portfolio.portfolio_item import PortfolioItem
@@ -104,7 +104,7 @@ class StockWatch(App):
     def on_error(self, *args):
         print "on_error: " + str(args)
 
-    def on_delete_entry(self, *args, **kwargs):
+    def on_delete_entry(self, *args, **kwargs): # pylint: disable=unused-argument 
         entry = kwargs['entry']
         self.portfolio.remove(entry)
         self.render_setup_screen_stocks()
@@ -121,7 +121,7 @@ class StockWatch(App):
             self.main_window.ids.existing_stock_setup_grid.addRow(temp_data)
  
 
-    def on_add_new_stock(self, *args):
+    def on_add_new_stock(self, *args):  # pylint: disable=unused-argument
         symbol = self.main_window.ids.stock_input.text
         #TODO: validate symbol
         num_shares = int(self.main_window.ids.num_shares_input.text)
