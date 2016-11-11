@@ -3,3 +3,5 @@
 bin/
 stockwatch.json
 stopwatch-release-key.keystore
+log.with.error
+.idea*
