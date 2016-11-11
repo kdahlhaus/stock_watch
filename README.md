@@ -1,4 +1,4 @@
-[<img src="https://landscape.io/github/kdahlhaus/stockwatch/master/landscape.png">](https://landscape.io/github/kdahlhaus/stockwatch/master)
+[<img src="https://landscape.io/github/kdahlhaus/stockwatch/master/badges">](https://landscape.io/github/kdahlhaus/stockwatch)
 
 
 # Stock Watch
