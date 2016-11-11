@@ -1,4 +1,4 @@
-strictness: high
+strictness: medium
 max-line-length: 999 
 python-targets:
   - 2

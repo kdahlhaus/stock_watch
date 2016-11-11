@@ -214,7 +214,6 @@ class StockWatch(App):
     def on_resume(self):
         # Here you can check if any data needs replacing (usually nothing)
         logging.info("resuming")
-        pass
 
 
 if __name__ == '__main__':
