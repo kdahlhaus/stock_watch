@@ -3,7 +3,7 @@ from kivy.network.urlrequest import UrlRequest
 import csv
 
 
-class YahooStockPriceProvider():
+class YahooStockPriceProvider(object):
 
     def __init__(self, on_results=None, on_error=None):
         self.symbols = []
